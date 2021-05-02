@@ -1,7 +1,8 @@
-int BORDER = 100;
-int BLANK = 101;
+static int BORDER = 100;
+static int BLANK = 101;
 
 class Board {
+
     int[][] board;
 
     Board() {
@@ -22,7 +23,7 @@ class Board {
         board[4][5] = board[5][4] = Stone.WHITE;
     }
 
-    int getAt(Position pos) {
+    int getAt(PosDir pos) {
         int ret = -1;
         if( 1 <= pos.x && pos.x <= 8 && 1 <= pos.y && pos.y <= 8 ) {
             ret = board[pos.x][pos.y];
@@ -30,13 +31,37 @@ class Board {
         return ret;
     }
 
-    boolean setStoneAt(int stone, Position pos) {
+    boolean setStoneAt(int stone, PosDir pos) {
         boolean success = false;
         if( 1 <= pos.x && pos.x <= 8 && 1 <= pos.y && pos.y <= 8 ) {
             board[pos.x][pos.y] = stone;
             success = true;
         }
         return success;
+    }
+
+    int countStones(int stone) {
+        int count = 0;
+        for( int x = 1 ; x <= 8 ; x++ ) {
+            for( int y = 1 ; y <= 8 ; y++ ) {
+                if( board[x][y] == stone ) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    int countBlank() {
+        int count = 0;
+        for( int x = 1 ; x <= 8 ; x++ ) {
+            for( int y = 1 ; y <= 8 ; y++ ) {
+                if( board[x][y] == BLANK ) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     String toString() {

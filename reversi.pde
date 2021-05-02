@@ -1,17 +1,17 @@
 int turn = Stone.BLACK;
 float unit_x, unit_y;
-
-Game game;
+Board board;
 
 void setup() {
     size(400, 400);
-    game = new Game();
+    Game.init();
+    board = new Board();
     unit_x = width  / 8;
     unit_y = height / 8;
 }
 
 void draw() {
-    drawBoard(game.board);
+    drawBoard(board);
 }
 
 void drawBoard(Board b) {
@@ -22,7 +22,7 @@ void drawBoard(Board b) {
             stroke(0);
             rectMode(CORNER);
             rect(unit_x * x, unit_y * y, unit_x, unit_y);
-            int stoneColor = b.getAt(new Position(x+1, y+1));
+            int stoneColor = b.getAt(new PosDir(x+1, y+1));
             if( stoneColor != BLANK ) {
                 ellipseMode(CENTER);
                 fill((stoneColor == Stone.BLACK) ? 0 : 255);
@@ -35,10 +35,10 @@ void drawBoard(Board b) {
 void mouseClicked() {
     int x = int(mouseX / unit_x) + 1;
     int y = int(mouseY / unit_y) + 1;
-    Position pos = new Position(x, y);
-    if( game.possibleToPutStoneAt(turn, pos) ) {
-        if( game.putStoneAt(turn, pos) ) {
-            game.reverseStonesFrom(pos);
+    PosDir pos = new PosDir(x, y);
+    if( Game.possibleToPutStoneAt(board, turn, pos) ) {
+        if( Game.putStoneAt(board, turn, pos) ) {
+            Game.reverseStonesFrom(board, pos);
             turn = Stone.reverseStone(turn);
         }
     }
