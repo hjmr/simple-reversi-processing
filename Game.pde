@@ -1,22 +1,14 @@
 static class Game {
-    static PosDir[] directions;
-
-    static void init() {
-        int[][] _dirs = {
-            {-1,-1},{ 0,-1},{ 1,-1},
-            {-1, 0},        { 1, 0},
-            {-1, 1},{ 0, 1},{ 1, 1}
-        };
-        directions = new PosDir[_dirs.length];
-        for( int i = 0 ; i < _dirs.length ; i++ ) {
-            directions[i] = new PosDir(_dirs[i][0], _dirs[i][1]);
-        }
-    }
+    static int[][] directions = {
+        {-1,-1},{ 0,-1},{ 1,-1},
+        {-1, 0},        { 1, 0},
+        {-1, 1},{ 0, 1},{ 1, 1}
+    };
 
     static boolean possibleToPutStone(Board board, int stone) {
         for( int x = 1 ; x <= 8 ; x++ ) {
             for( int y = 1 ; y <= 8 ; y++ ) {
-                if( possibleToPutStoneAt(board, stone, new PosDir(x, y)) ) {
+                if( possibleToPutStoneAt(board, stone, x, y) ) {
                     return true;
                 }
             }
@@ -24,11 +16,11 @@ static class Game {
         return false;
     }
 
-    static boolean possibleToPutStoneAt(Board board, int stone, PosDir pos) {
+    static boolean possibleToPutStoneAt(Board board, int stone, int x, int y) {
         boolean yn = false;
-        if( board.getAt(pos) == BLANK ) {
+        if( board.getAt(x, y) == BLANK ) {
             for( int i = 0 ; i < directions.length ; i++ ) {
-                if( 0 < _countReversibleStonesInDirection(board, stone, pos, directions[i]) ) {
+                if( 0 < _countReversibleStonesInDirection(board, stone, x, y, directions[i][0], directions[i][1]) ) {
                     yn = true;
                     break;
                 }
@@ -37,69 +29,74 @@ static class Game {
         return yn;
     }
 
-    static int countReversibleStones(Board board, int stone, PosDir pos) {
+    static int countReversibleStones(Board board, int stone, int x, int y) {
         int count = 0;
         for( int i = 0 ; i < directions.length ; i++ ) {
-            count += _countReversibleStonesInDirection(board, stone, pos, directions[i]);
+            count += _countReversibleStonesInDirection(board, stone, x, y, directions[i][0], directions[i][1]);
         }
         return count;
     }
 
-    static void reverseStonesFrom(Board board, PosDir pos) {
-        int stone = board.getAt(pos);
+    static void reverseStonesFrom(Board board, int x, int y) {
+        int stone = board.getAt(x, y);
         if( stone == Stone.BLACK || stone == Stone.WHITE ) {
             for( int i = 0 ; i < directions.length ; i++ ) {
-                PosDir dir = directions[i];
-                PosDir last_pos = _findLastPosInDirection(board, stone, pos, dir);
+                int[] dir = directions[i];
+                int[] last_pos = _findLastPosInDirection(board, stone, x, y, dir[0], dir[1]);
                 if( last_pos != null ) {
-                    _reverseStonesInDirection(board, stone, last_pos, PosDir.mul(dir, -1));
+                    _reverseStonesInDirection(board, stone, last_pos[0], last_pos[1], -dir[0], -dir[1]);
                 }
             }
         }
     }
 
-    static boolean putStoneAt(Board board, int stone, PosDir pos) {
+    static boolean putStoneAt(Board board, int stone, int x, int y) {
         boolean success = false;
-        if( board.getAt(pos) == BLANK ) {
-            board.setStoneAt(stone, pos);
+        if( board.getAt(x, y) == BLANK ) {
+            board.setStoneAt(stone, x, y);
             success = true;
         }
         return success;
     }
 
-    static int _countReversibleStonesInDirection(Board board, int stone, PosDir pos, PosDir dir) {
-        int rev_stone = Stone.reverseStone(stone);
+    static int _countReversibleStonesInDirection(Board board, int stone, int x, int y, int dx, int dy) {
+        int rev_stone = Stone.reverse(stone);
         int count = 0;
-        PosDir curr_pos = PosDir.add(pos, dir);
-        while( board.getAt(curr_pos) == rev_stone ) {
-            curr_pos.add(dir);
+        int curr_x  = x + dx, curr_y = y + dy;
+        while( board.getAt(curr_x, curr_y) == rev_stone ) {
+            curr_x += dx;
+            curr_y += dy;
             count++;
         }
-        if( board.getAt(curr_pos) != stone ) {
+        if( board.getAt(curr_x, curr_y) != stone ) {
             count = 0;
         }
         return count;
     }
 
-    static PosDir _findLastPosInDirection(Board board, int stone, PosDir pos, PosDir dir) {
-        int rev_stone = Stone.reverseStone(stone);
-        PosDir curr_pos = PosDir.add(pos, dir);
-        while( board.getAt(curr_pos) == rev_stone ) {
-            curr_pos.add(dir);
+    static int[] _findLastPosInDirection(Board board, int stone, int x, int y, int dx, int dy) {
+        int rev_stone = Stone.reverse(stone);
+        int curr_x  = x + dx, curr_y = y + dy;
+        while( board.getAt(curr_x, curr_y) == rev_stone ) {
+            curr_x += dx;
+            curr_y += dy;
         }
-        PosDir last_pos = null;
-        if( board.getAt(curr_pos) == stone ) {
-            last_pos = curr_pos;
+        int[] last_pos = null;
+        if( board.getAt(curr_x, curr_y) == stone ) {
+            last_pos = new int[2];
+            last_pos[0] = curr_x;
+            last_pos[1] = curr_y;
         }
         return last_pos;
     }
 
-    static void _reverseStonesInDirection(Board board, int stone, PosDir pos, PosDir dir) {
-        int rev_stone = Stone.reverseStone(stone);
-        PosDir curr_pos = PosDir.add(pos, dir);
-        while( board.getAt(curr_pos) == rev_stone ) {
-            board.setStoneAt(stone, curr_pos);
-            curr_pos.add(dir);
+    static void _reverseStonesInDirection(Board board, int stone, int x, int y, int dx, int dy) {
+        int rev_stone = Stone.reverse(stone);
+        int curr_x  = x + dx, curr_y = y + dy;
+        while( board.getAt(curr_x, curr_y) == rev_stone ) {
+            board.setStoneAt(stone, curr_x, curr_y);
+            curr_x += dx;
+            curr_y += dy;
         }
     }
 }

@@ -23,18 +23,18 @@ class Board {
         board[4][5] = board[5][4] = Stone.WHITE;
     }
 
-    int getAt(PosDir pos) {
+    int getAt(int x, int y) {
         int ret = -1;
-        if( 1 <= pos.x && pos.x <= 8 && 1 <= pos.y && pos.y <= 8 ) {
-            ret = board[pos.x][pos.y];
+        if( 1 <= x && x <= 8 && 1 <= y && y <= 8 ) {
+            ret = board[x][y];
         }
         return ret;
     }
 
-    boolean setStoneAt(int stone, PosDir pos) {
+    boolean setStoneAt(int stone, int x, int y) {
         boolean success = false;
-        if( 1 <= pos.x && pos.x <= 8 && 1 <= pos.y && pos.y <= 8 ) {
-            board[pos.x][pos.y] = stone;
+        if( 1 <= x && x <= 8 && 1 <= y && y <= 8 ) {
+            board[x][y] = stone;
             success = true;
         }
         return success;
@@ -62,6 +62,16 @@ class Board {
             }
         }
         return count;
+    }
+
+    Board copy() {
+        Board b = new Board();
+        for( int x = 0 ; x < this.board.length ; x++ ) {
+            for( int y = 0 ; y < this.board[x].length ; y++ ) {
+                b.board[x][y] = this.board[x][y];
+            }
+        }
+        return b;
     }
 
     String toString() {
