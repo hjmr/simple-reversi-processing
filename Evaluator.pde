@@ -28,7 +28,7 @@ class MiddleEvaluator extends Evaluator {
         int opp_stone = Stone.reverse(my_stone);
         int point = 0;
         int[][] corners = {{1,1}, {1,8}, {8,1}, {8,8}};
-        int corner_point = 5;
+        int corner_point = 10;
         for( int i = 0 ; i < corners.length ; i++ ) {
             int s = board.getAt(corners[i][0], corners[i][1]);
             if( s == my_stone ) {
