@@ -28,29 +28,41 @@ class Minimax {
 
     int[] searchNextMove(Board board, int maxLevel) {
         evalCount = 0;
-        EvalPos ep = doMinimax(board, this.myStone, 0, maxLevel);
+        EvalPos ep = doMinimax(board, this.myStone, 0, maxLevel, -1000, 1000);
         int[] ret = new int[2];
         ret[0] = ep.pos.x;
         ret[1] = ep.pos.y;
         return ret;
     }
 
-    EvalPos doMinimax(Board board, int stone, int currLevel, int maxLevel) {
+    EvalPos doMinimax(Board board, int stone, int currLevel, int maxLevel, int alpha, int beta) {
         EvalPos evalPos;
         currLevel++;
         ArrayList<Pos> posList = getPositionsToPutStone(board, stone);
         if( 0 < posList.size() ) {
             ArrayList<EvalPos> evalPosList = new ArrayList<EvalPos>();
+            int _alpha = -1000;
+            int _beta = 1000;
             for( int i = 0 ; i < posList.size() ; i++ ) {
+                int _ev = 0;
                 Board b = board.copy();
                 Pos pos = posList.get(i);
                 Game.putStoneAt(b, stone, pos.x, pos.y);
                 Game.reverseStonesFrom(b, pos.x, pos.y);
                 if( maxLevel <= currLevel ) {
-                    evalPosList.add(new EvalPos(pos, eval(b)));
+                    _ev = eval(b);
                 } else {
-                    evalPosList.add(new EvalPos(pos, doMinimax(b, Stone.reverse(stone), currLevel, maxLevel).eval));
+                    _ev = doMinimax(b, Stone.reverse(stone), currLevel, maxLevel, _alpha, _beta).eval;
                 }
+                evalPosList.add(new EvalPos(pos, _ev));
+
+                // alpha-beta branch cut
+                if(( stone == myStone && _beta < _ev ) || ( stone != myStone && _ev < _alpha )) {
+                    break;
+                }
+                // update alpha-beta
+                _alpha = (_alpha <   _ev) ? _ev : _alpha;
+                _beta = (_ev     < _beta) ? _ev : _beta;
             }
 
             if( stone == myStone) {
@@ -62,7 +74,7 @@ class Minimax {
             if( maxLevel <= currLevel ) {
                 evalPos = new EvalPos(null, eval(board));
             } else {
-                evalPos = new EvalPos(null, doMinimax(board, Stone.reverse(stone), currLevel, maxLevel).eval);
+                evalPos = new EvalPos(null, doMinimax(board, Stone.reverse(stone), currLevel, maxLevel, alpha, beta).eval);
             }
         }
         return evalPos;

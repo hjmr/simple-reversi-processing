@@ -24,7 +24,7 @@ class ComputerPlayer extends Player {
     }
 
     int[] nextMove(Board board) {
-        if( board.countBlank() < 12 ) {
+        if( board.countBlank() < 15 ) {
             actionSelector = new Minimax(new FinalEvaluator(), myStone);
         }
         return actionSelector.searchNextMove(board, maxSearchLevel);

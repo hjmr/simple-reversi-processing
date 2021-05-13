@@ -34,7 +34,7 @@ class MiddleEvaluator extends Evaluator {
             if( s == my_stone ) {
                 point += corner_point;
             } else if( s == opp_stone ) {
-                point = corner_point;
+                point -= corner_point;
             }
         }
         return point;
