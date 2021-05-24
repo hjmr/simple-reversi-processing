@@ -2,7 +2,7 @@ int turn = Stone.BLACK;
 float unit_x, unit_y;
 Board board;
 ComputerPlayer computerPlayer;
-int MAX_LEVEL = 8;
+int MAX_LEVEL = 7;
 boolean thinking = false;
 
 void setup() {
@@ -16,13 +16,13 @@ void setup() {
 void draw() {
     drawBoard(board);
     if( thinking == true ) {
-        stroke(255, 0, 0);
+        noStroke();
         fill(255, 0, 0);
         textSize(36);
         textAlign(CENTER, CENTER);
         text("thinking ... ", width/2, height/2);
     }
-    if( !Game.possibleToPutStone(board, turn) ) {
+    if( !board.possibleToPutStone(turn) ) {
         // pass
         turn = Stone.reverse(turn);
     } else if( turn == Stone.WHITE && thinking != true ) {
@@ -34,9 +34,9 @@ void doComputerTurn() {
     thinking = true;
     if( turn == Stone.WHITE ) {
         int[] pos = computerPlayer.nextMove(board);
-        if( Game.possibleToPutStoneAt(board, turn, pos[0], pos[1]) ) {
-            if( Game.putStoneAt(board, turn, pos[0], pos[1]) ) {
-                Game.reverseStonesFrom(board, pos[0], pos[1]);
+        if( board.possibleToPutStoneAt(turn, pos[0], pos[1]) ) {
+            if( board.putStoneAt(turn, pos[0], pos[1]) ) {
+                board.reverseStonesFrom(pos[0], pos[1]);
                 turn = Stone.reverse(turn);
                 thinking = false;
             }
@@ -66,9 +66,9 @@ void mouseClicked() {
     if( turn == Stone.BLACK ) {
         int x = int(mouseX / unit_x) + 1;
         int y = int(mouseY / unit_y) + 1;
-        if( Game.possibleToPutStoneAt(board, turn, x, y) ) {
-            if( Game.putStoneAt(board, turn, x, y) ) {
-                Game.reverseStonesFrom(board, x, y);
+        if( board.possibleToPutStoneAt(turn, x, y) ) {
+            if( board.putStoneAt(turn, x, y) ) {
+                board.reverseStonesFrom(x, y);
                 turn = Stone.reverse(turn);
             }
         }

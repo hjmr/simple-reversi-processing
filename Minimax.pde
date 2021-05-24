@@ -47,8 +47,8 @@ class Minimax {
                 int _ev = 0;
                 Board b = board.copy();
                 Pos pos = posList.get(i);
-                Game.putStoneAt(b, stone, pos.x, pos.y);
-                Game.reverseStonesFrom(b, pos.x, pos.y);
+                b.putStoneAt(stone, pos.x, pos.y);
+                b.reverseStonesFrom(pos.x, pos.y);
                 if( maxLevel <= currLevel ) {
                     _ev = eval(b);
                 } else {
@@ -57,7 +57,7 @@ class Minimax {
                 evalPosList.add(new EvalPos(pos, _ev));
 
                 // alpha-beta branch cut
-                if(( stone == myStone && _beta < _ev ) || ( stone != myStone && _ev < _alpha )) {
+                if(( stone == myStone && beta < _ev ) || ( stone != myStone && _ev < alpha )) {
                     break;
                 }
                 // update alpha-beta
@@ -84,7 +84,7 @@ class Minimax {
         ArrayList<Pos> positions = new ArrayList<Pos>();
         for(int x = 1 ; x <= 8 ; x++ ) {
             for( int y = 1 ; y <= 8 ; y++ ) {
-                if( Game.possibleToPutStoneAt(board, stone, x, y) ) {
+                if( board.possibleToPutStoneAt(stone, x, y) ) {
                     positions.add(new Pos(x, y));
                 }
             }

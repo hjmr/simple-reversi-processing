@@ -16,7 +16,7 @@ class MiddleEvaluator extends Evaluator {
         int count = 0;
         for( int x = 1 ; x <= 8 ; x++ ) {
             for( int y = 1 ; y <= 8 ; y++ ) {
-                if( Game.possibleToPutStoneAt(board, my_stone, x, y) ) {
+                if( board.possibleToPutStoneAt(my_stone, x, y) ) {
                     count++;
                 }
             }
