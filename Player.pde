@@ -38,11 +38,11 @@ class ComputerPlayer extends Player {
         char[] int2str = {' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
         float elapsed_time = elapsed_time_ms / 1000.0;
         float time_per_eval = 1000.0 * elapsed_time_ms / data[3];
-        println("Put:" + int2str[data[0]] + data[1] +
-                " Eval:" + data[2] +
-                " (level:" + maxSearchLevel +
-                " num:" + data[3] +
-                " time:" + elapsed_time +
-                " tpe:" + time_per_eval + " us)");
+        println("Put: " + int2str[data[0]] + data[1] +
+                " Eval: " + data[2] +
+                " (level: " + maxSearchLevel +
+                " num: " + data[3] +
+                " time: " + elapsed_time +
+                " tpe: " + time_per_eval + " us)");
     }
 }
