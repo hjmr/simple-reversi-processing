@@ -40,9 +40,9 @@ class ComputerPlayer extends Player {
         float time_per_eval = 1000.0 * elapsed_time_ms / data[3];
         println("Put: " + int2str[data[0]] + data[1] +
                 " Eval: " + data[2] +
-                " (level: " + maxSearchLevel +
-                " num: " + data[3] +
-                " time: " + elapsed_time +
-                " tpe: " + time_per_eval + " us)");
+                " (level:" + maxSearchLevel +
+                " num:" + data[3] +
+                " time:" + nf(elapsed_time,0,2) + "s" +
+                " tpe:" + nf(time_per_eval,0,2) + "us)");
     }
 }
