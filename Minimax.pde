@@ -29,9 +29,7 @@ class Minimax {
     int[] searchNextMove(Board board, int maxLevel) {
         evalCount = 0;
         EvalPos ep = doMinimax(board, this.myStone, 0, maxLevel, -1000, 1000);
-        int[] ret = new int[2];
-        ret[0] = ep.pos.x;
-        ret[1] = ep.pos.y;
+        int[] ret = {ep.pos.x, ep.pos.y, ep.eval, this.evalCount};
         return ret;
     }
 
