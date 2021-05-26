@@ -26,6 +26,7 @@ class ComputerPlayer extends Player {
     int[] nextMove(Board board) {
         if( board.countBlank() < maxSearchLevel + 8 ) {
             actionSelector = new Minimax(new FinalEvaluator(), myStone);
+            this.maxSearchLevel = board.countBlank();
         }
         int start_time = millis();
         int[] ret = actionSelector.searchNextMove(board, maxSearchLevel);
