@@ -1,5 +1,5 @@
 static int BORDER = 100;
-static int BLANK = 101;
+static int BLANK  = 101;
 
 class Board {
 
