@@ -25,8 +25,8 @@ class Board {
         for( int i = 0 ; i < 10 ; i++ ) {
             board[0][i] = board[9][i] = board[i][0] = board[i][9] = BORDER;
         }
-        board[4][4] = board[5][5] = Stone.BLACK;
-        board[4][5] = board[5][4] = Stone.WHITE;
+        board[4][4] = board[5][5] = Stone.WHITE;
+        board[4][5] = board[5][4] = Stone.BLACK;
     }
 
     int getAt(int x, int y) {
