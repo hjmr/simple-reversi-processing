@@ -26,7 +26,7 @@ void draw() {
         // pass
         turn = Stone.reverse(turn);
     } else if( turn == Stone.WHITE && thinking != true ) {
-        thread("doComputerTurn");
+        thread("doComputerTurn"); // call method "doComputerTurn" in different thread
     }
 }
 
