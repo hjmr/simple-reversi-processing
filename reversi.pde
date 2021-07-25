@@ -10,7 +10,7 @@ void setup() {
     board = new Board();
     unit_x = width  / 8;
     unit_y = height / 8;
-    Evaluator midEval = new PutPosCornerEvaluator(1.0, 1.0, 1.0);
+    Evaluator midEval = new PutPosCornerEvaluator(2.0, 1.0, 1.0);
     Evaluator finEval = new StoneNumEvaluator();
     computerPlayer = new ComputerPlayer(Stone.WHITE, midEval, finEval, MAX_LEVEL);
 }
