@@ -1,20 +1,38 @@
+class Pos {
+    int x, y;
+    Pos(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class Action {
+    Pos pos;
+    float eval;
+    int evalCount;
+    Action(Pos pos, float eval, int evalCount) {
+        this.pos = pos;
+        this.eval = eval;
+        this.evalCount = evalCount;
+    }
+}
+
+class ActionSelector {
+    Action searchNextMove(Board board) {
+        return null;
+    }
+}
+
+
 class Minimax {
     Evaluator evaluator = null;
     int myStone = 0;
     int evalCount = 0;
 
-    class Pos {
-        int x, y;
-        Pos(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
     class EvalPos {
         Pos pos;
-        int eval;
-        EvalPos(Pos pos, int eval) {
+        float eval;
+        EvalPos(Pos pos, float eval) {
             this.pos = pos;
             this.eval = eval;
         }
@@ -26,36 +44,36 @@ class Minimax {
         this.evalCount = 0;
     }
 
-    int[] searchNextMove(Board board, int maxLevel) {
+    Action searchNextMove(Board board, int maxLevel) {
         evalCount = 0;
         EvalPos ep = doMinimax(board, this.myStone, 0, maxLevel, -1000, 1000);
-        int[] ret = {ep.pos.x, ep.pos.y, ep.eval, this.evalCount};
-        return ret;
+        Action action = new Action(ep.pos, ep.eval, this.evalCount);
+        return action;
     }
 
-    EvalPos doMinimax(Board board, int stone, int currLevel, int maxLevel, int alpha, int beta) {
+    EvalPos doMinimax(Board board, int currStone, int currLevel, int maxLevel, float alpha, float beta) {
         EvalPos evalPos;
         currLevel++;
-        ArrayList<Pos> posList = getPositionsToPutStone(board, stone);
+        ArrayList<Pos> posList = getPositionsToPutStone(board, currStone);
         if( 0 < posList.size() ) {
             ArrayList<EvalPos> evalPosList = new ArrayList<EvalPos>();
-            int _alpha = -1000;
-            int _beta = 1000;
+            float _alpha = -1000;
+            float _beta = 1000;
             for( int i = 0 ; i < posList.size() ; i++ ) {
-                int _ev = 0;
+                float _ev = 0;
                 Board b = board.copy();
                 Pos pos = posList.get(i);
-                b.putStoneAt(stone, pos.x, pos.y);
+                b.putStoneAt(currStone, pos.x, pos.y);
                 b.reverseStonesFrom(pos.x, pos.y);
                 if( maxLevel <= currLevel ) {
-                    _ev = eval(b);
+                    _ev = eval(b, currStone);
                 } else {
-                    _ev = doMinimax(b, Stone.reverse(stone), currLevel, maxLevel, _alpha, _beta).eval;
+                    _ev = doMinimax(b, Stone.reverse(currStone), currLevel, maxLevel, _alpha, _beta).eval;
                 }
                 evalPosList.add(new EvalPos(pos, _ev));
 
                 // alpha-beta branch cut
-                if(( stone == myStone && beta < _ev ) || ( stone != myStone && _ev < alpha )) {
+                if(( currStone == myStone && beta < _ev ) || ( currStone != myStone && _ev < alpha )) {
                     break;
                 }
                 // update alpha-beta
@@ -63,16 +81,16 @@ class Minimax {
                 _beta = (_ev     < _beta) ? _ev : _beta;
             }
 
-            if( stone == myStone) {
+            if( currStone == myStone) {
                 evalPos = getMax(evalPosList);
             } else {
                 evalPos = getMin(evalPosList);
             }
         } else {
             if( maxLevel <= currLevel ) {
-                evalPos = new EvalPos(null, eval(board));
+                evalPos = new EvalPos(null, eval(board, currStone));
             } else {
-                evalPos = new EvalPos(null, doMinimax(board, Stone.reverse(stone), currLevel, maxLevel, alpha, beta).eval);
+                evalPos = new EvalPos(null, doMinimax(board, Stone.reverse(currStone), currLevel, maxLevel, alpha, beta).eval);
             }
         }
         return evalPos;
@@ -90,9 +108,9 @@ class Minimax {
         return positions;
     }
 
-    int eval(Board board) {
+    float eval(Board board, int currStone) {
         evalCount++;
-        int ev = evaluator.eval(board, myStone);
+        float ev = evaluator.eval(board, currStone, myStone);
         return ev;
     }
 

@@ -8,41 +8,44 @@ class Player {
         return myStone;
     }
 
-    int[] nextMove(Board board) {
-        int[] ret = new int[2];
-        return ret;
+    Action nextMove(Board board) {
+        return null;
     }
 }
 
 class ComputerPlayer extends Player {
     int maxSearchLevel = 1;
     Minimax actionSelector;
-    ComputerPlayer(int myStone, int maxSearchLevel) {
+    Evaluator middleEvaluator;
+    Evaluator finalEvaluator;
+    ComputerPlayer(int myStone, Evaluator middleEvaluator, Evaluator finalEvaluator, int maxSearchLevel) {
         super(myStone);
+        this.middleEvaluator = middleEvaluator;
+        this.finalEvaluator = finalEvaluator;
         this.maxSearchLevel = maxSearchLevel;
-        actionSelector = new Minimax(new MiddleEvaluator(), myStone);
+        actionSelector = new Minimax(this.middleEvaluator, myStone);
     }
 
-    int[] nextMove(Board board) {
+    Action nextMove(Board board) {
         if( board.countBlank() < maxSearchLevel + 8 ) {
-            actionSelector = new Minimax(new FinalEvaluator(), myStone);
+            actionSelector = new Minimax(this.finalEvaluator, myStone);
             this.maxSearchLevel = board.countBlank();
         }
         int start_time = millis();
-        int[] ret = actionSelector.searchNextMove(board, maxSearchLevel);
+        Action action = actionSelector.searchNextMove(board, maxSearchLevel);
         int elapsed_time_ms = millis() - start_time;
-        showStat(elapsed_time_ms, ret);
-        return ret;
+        showStat(elapsed_time_ms, action);
+        return action;
     }
 
-    void showStat(int elapsed_time_ms, int[] data) {
+    void showStat(int elapsed_time_ms, Action act) {
         char[] int2str = {' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
         float elapsed_time = elapsed_time_ms / 1000.0;
-        float time_per_eval = 1000.0 * elapsed_time_ms / data[3];
-        println("Put: " + int2str[data[0]] + data[1] +
-                " Eval: " + data[2] +
+        float time_per_eval = 1000.0 * elapsed_time_ms / act.evalCount;
+        println("Put: " + int2str[act.pos.x] + act.pos.y +
+                " Eval: " + act.eval +
                 " (level:" + maxSearchLevel +
-                " num:" + data[3] +
+                " num:" + act.evalCount +
                 " time:" + nf(elapsed_time,0,2) + "s" +
                 " tpe:" + nf(time_per_eval,0,2) + "us)");
     }

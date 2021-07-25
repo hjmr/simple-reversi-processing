@@ -10,7 +10,9 @@ void setup() {
     board = new Board();
     unit_x = width  / 8;
     unit_y = height / 8;
-    computerPlayer = new ComputerPlayer(Stone.WHITE, MAX_LEVEL);
+    Evaluator midEval = new PutPosCornerEvaluator(1.0, 1.0, 1.0);
+    Evaluator finEval = new StoneNumEvaluator();
+    computerPlayer = new ComputerPlayer(Stone.WHITE, midEval, finEval, MAX_LEVEL);
 }
 
 void draw() {
@@ -33,10 +35,10 @@ void draw() {
 void doComputerTurn() {
     thinking = true;
     if( turn == Stone.WHITE ) {
-        int[] pos = computerPlayer.nextMove(board);
-        if( board.possibleToPutStoneAt(turn, pos[0], pos[1]) ) {
-            if( board.putStoneAt(turn, pos[0], pos[1]) ) {
-                board.reverseStonesFrom(pos[0], pos[1]);
+        Action action = computerPlayer.nextMove(board);
+        if( board.possibleToPutStoneAt(turn, action.pos.x, action.pos.y) ) {
+            if( board.putStoneAt(turn, action.pos.x, action.pos.y) ) {
+                board.reverseStonesFrom(action.pos.x, action.pos.y);
                 turn = Stone.reverse(turn);
                 thinking = false;
             }
