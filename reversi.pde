@@ -2,7 +2,7 @@ int turn = Stone.BLACK;
 float unit_x, unit_y;
 Board board;
 ComputerPlayer computerPlayer;
-int MAX_LEVEL = 5;
+int MAX_LEVEL = 7;
 boolean thinking = false;
 int pass_num = 0;
 
