@@ -42,7 +42,7 @@ class Minimax extends ActionSelector {
                 b.putStoneAt(currStone, pos.x, pos.y);
                 b.reverseStonesFrom(pos.x, pos.y);
                 if( this.maxLevel <= currLevel ) {
-                    _ev = eval(b, currStone);
+                    _ev = eval(b);
                 } else {
                     _ev = doMinimax(b, Stone.reverse(currStone), currLevel, _alpha, _beta).eval;
                 }
@@ -64,7 +64,7 @@ class Minimax extends ActionSelector {
             }
         } else {
             if( this.maxLevel <= currLevel ) {
-                evalPos = new EvalPos(null, eval(board, currStone));
+                evalPos = new EvalPos(null, eval(board));
             } else {
                 evalPos = new EvalPos(null, doMinimax(board, Stone.reverse(currStone), currLevel, alpha, beta).eval);
             }
@@ -84,9 +84,9 @@ class Minimax extends ActionSelector {
         return positions;
     }
 
-    float eval(Board board, int currStone) {
-        evalCount++;
-        float ev = evaluator.eval(board, currStone, myStone);
+    float eval(Board board) {
+        this.evalCount++;
+        float ev = evaluator.eval(board, myStone);
         return ev;
     }
 

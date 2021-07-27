@@ -1,5 +1,5 @@
 class Evaluator {
-    float eval(Board board, int curr_stone, int my_stone) {
+    float eval(Board board, int my_stone) {
         return 0;
     }
 }
@@ -11,7 +11,7 @@ class PutPosCornerEvaluator extends Evaluator {
         this.opp_pos_rate = opp_pos_rate;
         this.corner_rate  = corner_rate;
     }
-    float eval(Board board, int curr_stone, int my_stone) {
+    float eval(Board board, int my_stone) {
         int my_putpos = countPutPos(board, my_stone);
         int opp_putpos = countPutPos(board, Stone.reverse(my_stone));
         float eval = this.my_pos_rate * my_putpos - this.opp_pos_rate * opp_putpos + this.corner_rate * evalCorners(board, my_stone);
@@ -48,7 +48,7 @@ class PutPosCornerEvaluator extends Evaluator {
 }
 
 class StoneNumEvaluator extends Evaluator {
-    float eval(Board board, int curr_stone, int my_stone) {
+    float eval(Board board, int my_stone) {
         int my_count = board.countStones(my_stone);
         int opp_count = board.countStones(Stone.reverse(my_stone));
         return my_count - opp_count;
