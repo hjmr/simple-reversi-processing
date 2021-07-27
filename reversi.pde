@@ -2,8 +2,9 @@ int turn = Stone.BLACK;
 float unit_x, unit_y;
 Board board;
 ComputerPlayer computerPlayer;
-int MAX_LEVEL = 7;
+int MAX_LEVEL = 5;
 boolean thinking = false;
+int pass_num = 0;
 
 void setup() {
     size(400, 400);
@@ -12,21 +13,28 @@ void setup() {
     unit_y = height / 8;
     Evaluator midEval = new PutPosCornerEvaluator(2.0, 1.0, 1.0);
     Evaluator finEval = new StoneNumEvaluator();
-    computerPlayer = new ComputerPlayer(Stone.WHITE, midEval, finEval, MAX_LEVEL);
+    computerPlayer = new MinimaxPlayer(Stone.WHITE, midEval, finEval, MAX_LEVEL);
 }
 
 void draw() {
     drawBoard(board);
     if( thinking == true ) {
         noStroke();
-        fill(255, 0, 0);
         textSize(36);
         textAlign(CENTER, CENTER);
+        fill(255, 0, 0);
         text("thinking ... ", width/2, height/2);
     }
-    if( !board.possibleToPutStone(turn) ) {
+    if( 2 <= pass_num ) {
+        noStroke();
+        textSize(36);
+        textAlign(CENTER, CENTER);
+        fill(0, 0, 0);
+        text("Finished.", width/2, height/2);
+    } else if( !board.possibleToPutStone(turn) ) {
         // pass
         turn = Stone.reverse(turn);
+        pass_num++;
     } else if( turn == Stone.WHITE && thinking != true ) {
         thread("doComputerTurn"); // call method "doComputerTurn" in different thread
     }
@@ -40,6 +48,7 @@ void doComputerTurn() {
             if( board.putStoneAt(turn, action.pos.x, action.pos.y) ) {
                 board.reverseStonesFrom(action.pos.x, action.pos.y);
                 turn = Stone.reverse(turn);
+                pass_num = 0;
                 thinking = false;
             }
         }
@@ -72,6 +81,7 @@ void mouseClicked() {
             if( board.putStoneAt(turn, x, y) ) {
                 board.reverseStonesFrom(x, y);
                 turn = Stone.reverse(turn);
+                pass_num = 0;
             }
         }
     }

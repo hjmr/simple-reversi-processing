@@ -48,7 +48,7 @@ class PutPosCornerEvaluator extends Evaluator {
 }
 
 class StoneNumEvaluator extends Evaluator {
-    float eval(Board board, int my_stone) {
+    float eval(Board board, int curr_stone, int my_stone) {
         int my_count = board.countStones(my_stone);
         int opp_count = board.countStones(Stone.reverse(my_stone));
         return my_count - opp_count;

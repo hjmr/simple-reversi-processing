@@ -15,24 +15,15 @@ class Player {
 
 class ComputerPlayer extends Player {
     int maxSearchLevel = 1;
-    Minimax actionSelector;
-    Evaluator middleEvaluator;
-    Evaluator finalEvaluator;
-    ComputerPlayer(int myStone, Evaluator middleEvaluator, Evaluator finalEvaluator, int maxSearchLevel) {
+    ActionSelector actionSelector;
+    ComputerPlayer(int myStone, ActionSelector selector) {
         super(myStone);
-        this.middleEvaluator = middleEvaluator;
-        this.finalEvaluator = finalEvaluator;
-        this.maxSearchLevel = maxSearchLevel;
-        actionSelector = new Minimax(this.middleEvaluator, myStone);
+        this.actionSelector = selector;
     }
 
     Action nextMove(Board board) {
-        if( board.countBlank() < maxSearchLevel + 8 ) {
-            actionSelector = new Minimax(this.finalEvaluator, myStone);
-            this.maxSearchLevel = board.countBlank();
-        }
         int start_time = millis();
-        Action action = actionSelector.searchNextMove(board, maxSearchLevel);
+        Action action = actionSelector.searchNextMove(board);
         int elapsed_time_ms = millis() - start_time;
         showStat(elapsed_time_ms, action);
         return action;
@@ -44,9 +35,26 @@ class ComputerPlayer extends Player {
         float time_per_eval = 1000.0 * elapsed_time_ms / act.evalCount;
         println("Put: " + int2str[act.pos.x] + act.pos.y +
                 " Eval: " + act.eval +
-                " (level:" + maxSearchLevel +
-                " num:" + act.evalCount +
+                " (num:" + act.evalCount +
                 " time:" + nf(elapsed_time,0,2) + "s" +
                 " tpe:" + nf(time_per_eval,0,2) + "us)");
+    }
+}
+
+
+class MinimaxPlayer extends ComputerPlayer {
+    Evaluator finalEvaluator;
+    int maxSearchLevel;
+    MinimaxPlayer(int myStone, Evaluator middleEvaluator, Evaluator finalEvaluator, int maxSearchLevel) {
+        super(myStone, new Minimax(myStone, middleEvaluator, maxSearchLevel));
+        this.finalEvaluator = finalEvaluator;
+        this.maxSearchLevel = maxSearchLevel;
+    }
+
+    Action nextMove(Board board) {
+        if( board.countBlank() < this.maxSearchLevel + 8 ) {
+            this.actionSelector = new Minimax(myStone, this.finalEvaluator, board.countBlank());
+        }
+        return super.nextMove(board);
     }
 }
